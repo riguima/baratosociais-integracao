@@ -10,6 +10,9 @@ toml = "*"
 woocommerce = "*"
 
 [dev-packages]
+ruff = "*"
+isort = "*"
+blue = "*"
 
 [requires]
 python_version = "3.11"

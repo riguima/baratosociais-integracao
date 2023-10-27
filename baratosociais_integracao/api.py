@@ -1,4 +1,7 @@
+import re
+
 import toml
+from httpx import Client
 from woocommerce import API
 
 secrets = toml.load(open('.secrets.toml'))
@@ -16,10 +19,11 @@ def get_completed_orders():
     result = []
     for order in wcapi.get('orders').json():
         item = order['line_items'][0]
+        quantity = int(re.findall(r'^\d+ ', item['name'].replace('.', ''))[0])
         order_result = {
             'id': order['id'],
             'product_name': item['name'],
-            'quantity': item['quantity'],
+            'quantity': quantity,
         }
         if order['status'] == 'completed':
             result.append(order_result)
@@ -27,4 +31,16 @@ def get_completed_orders():
 
 
 def add_order_on_provider(order):
-    pass
+    service = 784 if 'instagram' in order['product_name'].lower() else 662
+    with Client() as client:
+        response = client.post(
+            'https://baratosociais.com/api/v2',
+            json={
+                'key': secrets['BARATOSOCIAIS_API_KEY'],
+                'action': 'add',
+                'service': service,
+                'link': '',
+                'quantity': order['quantity'],
+            },
+        )
+        return response.json()['order']
