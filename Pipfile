@@ -7,7 +7,7 @@ name = "pypi"
 sqlalchemy = "*"
 httpx = "*"
 toml = "*"
-woocommerce = "*"
+flask = "*"
 
 [dev-packages]
 ruff = "*"
